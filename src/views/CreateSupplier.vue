@@ -20,19 +20,19 @@
                   label="Stok"
                   required
                 ></v-text-field>
-                <v-btn type="button" @click="adddata" block class="mt-2">Submit</v-btn>
-                <v-btn type="button" @click="gotohome" block class="mt-2">Cancel</v-btn>
+                <v-btn type="v-btn" @click="adddata" block class="mt-2">Submit</v-btn>
+                <v-btn type="v-btn" @click="gotohome" block class="mt-2">Cancel</v-btn>
               </v-form>
             </v-sheet>
     </div>
 </template>
+
 <script>
     import router from '@/router'
     import Axios from 'axios'
     
 export default {
     name : 'Createbarang',
-    components : [],
     data() {
         return {
             namaSupplier : '',
@@ -60,7 +60,7 @@ export default {
             .then((resp) => {
               if (resp.status === 200 ){
                 console.log("berhasil create supplier")
-                router.push('supplier')
+                this.gotohome()
               } else {
                   this.msg = resp.data.message
                   this.gagalmodal = true
@@ -75,6 +75,7 @@ export default {
     },
 }
 </script>
+
 <style lang="">
     
 </style>

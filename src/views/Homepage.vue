@@ -1,84 +1,199 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-    <button @click.prevent="supplier"> Supplier</button>
-<div class="ma-2 pa-3 border rounded">
-  <button @click.prevent="addBarang"> Add Barang</button>
-  <v-container>
-      <v-table
-        fixed-header
-        height="600px"
-        id="tbl"
-      >
-        <thead>
-          <tr>
-            <th class="text-left">
-              No
-            </th>
-            <th class="text-left">
-              Nama Barang
-            </th>
-            <th class="text-left">
-              Stok
-            </th>
-            <th class="text-left">
-              Harga
-            </th>
-            <th class="text-left">
-              Nama Suplier
-            </th>
-            <th class="text-left">
-              Alamat Suplier
-            </th><th class="text-left">
-              Telepon Suplier
-            </th><th class="text-left">
-               Aksi
-            </th>
-          </tr>
-        </thead>
-        <tbody class="text-left">
-          <tr
-            v-for="item, index in listbarang"
-            :key="item.id"
+  <div class="about pa-5 ma-3">
+    <h1>List {{menu}}</h1>
+    <v-row>
+      <v-col cols="3">
+          <v-card
+            class="mx-auto my-2"
+            max-width="344"
+            
+            outlined
           >
-            <td>{{ (currentPage - 1) * limit + index + 1 }}. {{ item.name }}</td>
-            <td>{{ item.namaBarang }}</td>
-            <td>{{ item.stok }}</td>
-            <td>{{ item.harga }}</td>
-            <td>{{ item.supplier.alamat }}</td>
-            <td>{{ item.supplier.namaSupplier }}</td>
-            <td>{{ item.supplier.noTelp}}</td>
-            <td class="pa-2"> <button @click.prevent="updateData(item)" class="border pa-2 rounded">Update</button> <button class="border pa-2 rounded">Hapus</button></td>
-          </tr>
-        </tbody>
-        <div>
-        </div>
-      </v-table>
-
-      <div>
-        limit 
-        <select id="limit" v-model="limit" @change.prevent="changeLimit">
-          <option v-for="option in limitOptions" :key="option" :value="option">{{ option }}</option>
-        </select>
-         <button :disabled="currentPage === 1" @click.prevent="previousPage">Previous</button>
-        <div>
-          <button v-for="pageNumber in pageCount" :key="pageNumber" @click="changePage(pageNumber)">
-            {{ pageNumber }}
-          </button>
-          <button :disabled="currentPage === pageCount" @click.prevent="nextPage">Next</button>
-        </div>
-          
-      </div>
+            <v-img
+              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              height="200px"
+              cover
+            ></v-img>
+        
+            <v-card-title>
+              Username
+            </v-card-title>
+        
+            <v-card-subtitle>
+              ONLINE
+            </v-card-subtitle>
+        
+            <v-card-actions>
+              <v-btn
+                color="orange-lighten-2"
+              >
+                Explore
+              </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
       
-      <div>
-        <button class="button btn-primary" @click.prevent="exportExcel">Export to Excel</button>
-      </div>
-  </v-container>
-</div>
+          </v-card>
+          <v-card
+            class="mx-auto my-2"
+            max-width="344"
+            outlined
+          >
+            <v-card-title>
+              Menu
+            </v-card-title>
+        
+            <v-card-subtitle>
+              <v-list-item class="btn" fab :disabled="isSupplier" @click.prevent="supplier" :color="isSupplier ? 'blue' : 'primary'">
+                Supplier
+              </v-list-item>
+              <v-list-item class="btn" @click.prevent="barang" :disabled="isBarang" fab :color="isBarang? 'blue' : 'primary'">
+                Barang
+              </v-list-item>
+            </v-card-subtitle>
+          </v-card>
+
+          <v-card
+            class="mx-auto my-6"
+            max-width="344"
+            outlined
+          >
+            <v-card-title @click.prevent="logout">
+              Logout
+            </v-card-title>
+          </v-card>
+
+         
+          <!-- <v-btn class="ma-2 " @click.prevent="supplier"> Supplier</v-btn> -->
+      </v-col>
+      <v-col cols="9">
+        <div class="mx-1 pa-2 border rounded-lg" outlined>
+          <div class="d-flex justify-space-between mx-2 pa-2">
+            <h3>{{menu}}</h3>
+            <v-btn class="flex-row-reverse" @click.prevent="addBarang(menu)" :loading="isLoading"> Add {{menu}}</v-btn>
+          </div>
+          <v-container class="mx-auto pa-2 my-2 border rounded-lg" outlined>
+              <v-table v-if="isBarang"
+                max-width="2000px"
+                height="700px"
+                class="w-100"
+                id="tbl"
+                :loading="isLoading"
+              >
+                <thead>
+                  <tr>
+                    <th class="text-left">
+                      No
+                    </th>
+                    <th class="text-left">
+                      Nama Barang
+                    </th>
+                    <th class="text-left">
+                      Stok
+                    </th>
+                    <th class="text-left">
+                      Harga
+                    </th>
+                    <th class="text-left">
+                      Nama Suplier
+                    </th>
+                    <th class="text-left">
+                      Alamat Suplier
+                    </th><th class="text-left">
+                      Telepon Suplier
+                    </th><th class="text-left">
+                       Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="text-left">
+                  <tr
+                    v-for="item, index in listbarang"
+                    :key="item.id"
+                  >
+                    <td>{{ (currentPage - 1) * limit + index + 1 }}. {{ item.name }}</td>
+                    <td>{{ item.namaBarang }}</td>
+                    <td>{{ item.stok }}</td>
+                    <td>{{ item.harga }}</td>
+                    <td>{{ item.supplier.alamat }}</td>
+                    <td>{{ item.supplier.namaSupplier }}</td>
+                    <td>{{ item.supplier.noTelp}}</td>
+                    <td class="pa-2"> <v-btn @click.prevent="updateData(item)" class="border pa-2 rounded">Update</v-btn> <v-btn class="border pa-2 rounded">Hapus</v-btn></td>
+                  </tr>
+                </tbody>
+                <div>
+                </div>
+              </v-table>
+              
+              <v-table
+              fixed-header
+              height="600px" v-if="isSupplier"
+              id="tbl"
+            >
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    No
+                  </th>
+                  <th class="text-left">
+                    Nama Supplier
+                  </th>
+                  <th class="text-left">
+                    Alamat
+                  </th>
+                  <th class="text-left">
+                   No  Telepon
+                  </th>
+                  <th class="text-left">
+                     Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="text-left">
+                <tr
+                  v-for="item, index in listSupplier"
+                  :key="item.id"
+                >
+                  <td>{{ (currentPage - 1) * limit + index + 1 }}. {{ item.name }}</td>
+                  <td>{{ item.namaSupplier }}</td>
+                  <td>{{ item.alamat }}</td>
+                  <td>{{ item.noTelp}}</td>
+                  <td class="pa-2"> <button @click.prevent="updateData(item)" class="border pa-2 rounded">Update</button> <button class="border pa-2 rounded">Hapus</button></td>
+                </tr>
+              </tbody>
+              <div>
+              </div>
+              </v-table>
+               <div class="d-flex justify-end">
+                itemms per page
+                <select id="limit" v-model="limit" @change.prevent="changeLimit">
+                  <option v-for="option in limitOptions" :key="option" :value="option">{{ option }}</option>
+                </select>
+                 <v-btn :disabled="currentPage === 1" @click.prevent="previousPage">Previous</v-btn>
+                 <v-btn :disabled="currentPage === pageCount" @click.prevent="nextPage">Next</v-btn>
+                 page : {{ currentPage }}
+                </div>
+                <div>
+                    <!-- <v-btn v-for="pageNumber in pageCount" :key="pageNumber" @click="changePage(pageNumber)">
+                      {{ pageNumber }}
+                    </v-btn> -->
+                </div>
+              
+              <div>
+              </div>
+            </v-container>
+            <v-btn class="v-btn btn-primary" @click.prevent="exportExcel">Export to Excel</v-btn>
+        </div>
+
+
+      </v-col>
+    </v-row>
+    <v-row>
+    </v-row>
   </div>
 </template>
 <script>
 import router from '@/router'
+import { switchCase } from '@babel/types';
 import Axios from 'axios'
 // let XLSX = require("xlsx");
 import * as XLSX from 'xlsx/xlsx.mjs';
@@ -98,7 +213,16 @@ export default {
       limit: 20,
       limitOptions: [10, 20, 50, 100],
       totalItems: 0,
-      totalPage: 0
+      totalPage: 0,
+      show : false,
+      page : '',
+      isLoading : false,
+      isBarang : true,
+      isSupplier : false,
+      listSupplier : [],
+      menu : 'Barang',
+      linkBarang : 'http://159.223.57.121:8090/barang/find-all',
+      linkSupplier : 'http://159.223.57.121:8090/supplier/find-all'
     }
   },
   computed: {
@@ -118,33 +242,53 @@ export default {
     }
   },
   mounted() {
-    this.fetchdata()
+    this.fetchdata(this.linkBarang)
+  },
+  watch : {
+    isSupplier(){
+       if (this.isSupplier === true) {
+      this.fetchdata(this.linkSupplier)
+       this.menu = 'Supplier'}
+
+    }, 
+
+    isBarang() {
+      if (this.isBarang === true) 
+      {this.fetchdata(this.linkBarang)
+      this.menu = "Barang"}
+
+    }
   },
   methods : {
-    fetchdata() {
+    fetchdata(link) {
       const offset = (this.currentPage - 1) * this.limit;
-             Axios.get(`http://159.223.57.121:8090/barang/find-all?limit=${this.limit}&offset=${offset}`, 
-              {
-                headers: {
+      this.isLoading = true
+            Axios.get(`${link}?limit=${this.limit}&offset=${offset}`, 
+              { headers: {
                   'accept': '*/*',
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ' + this.token // token adalah nilai dari authorization token yang diperoleh sebelumnya
-              }
-            })
+              }})
             .then((resp) => {
-              if (resp.status === 200){
+              
+              if (resp.status === 200 && this.isSupplier){
+                this.updateItemNumbers();
+                this.detail = resp.data
+                this.listSupplier = this.detail.data
+                this.totalItems = this.detail.total_record
+                this.totalPage = this.detail.total_page
+                this.isLoading = false
+              } else if (resp.status === 200 && this.isBarang){
                 this.updateItemNumbers();
                 this.detail = resp.data
                 this.listbarang = this.detail.data
                 this.totalItems = this.detail.total_record
                 this.totalPage = this.detail.total_page
+                this.isLoading = false 
               } else {
-
-              }
-            }
-            )
+                this.gagalmodal = true
+              }})
             .catch(err => console.error(err)) 
-
     },
     updateItemNumbers() {
       setTimeout(() => {
@@ -174,22 +318,48 @@ export default {
     },
     exportExcel() {
       const data = JSON.parse(JSON.stringify(this.listbarang)); 
-      document.getElementById("xport")
+      // let tbl = document.getElementById("xport")
       const wb = XLSX.utils.table_to_book(tbl);
 
       // Mengunduh file Excel
-      XLSX.writeFile(wb, "HTMLFlicker.xlsx");
+      XLSX.writeFile(wb, `Data ${this.menu} page ${this.currentPage}.xlsx`);
     },
-    addBarang(){
-      router.push('/addbarang')
+    addBarang(menu){
+      switch (menu) {
+        case "Barang":
+          router.push('/addbarang')
+          break;
+        case "Supplier":
+        router.push('/addsupplier')
+
+          break;
+        default:
+          break;
+      }
+   
+
     }, 
     updateData(item){
       console.log(item.id)
       // let itemdetail = item.id  
-      router.push({name : 'editbarang', params : {id : item.id}})
+      if (this.isSupplier) {
+        router.push({name : 'editsupplier', params : {id : item.id}})
+        
+      } else {
+        router.push({name : 'editbarang', params : {id : item.id}})
+      }
     },
     supplier(){
-      router.push('/supplier')
+      this.isSupplier = true
+      this.isBarang = false
+    },
+    barang(){
+      this.isSupplier = false
+      this.isBarang = true
+    },
+    logout(){
+      localStorage.removeItem('token');
+      router.push('/login')
     }
   
   }}

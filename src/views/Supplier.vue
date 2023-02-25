@@ -66,8 +66,6 @@ export default {
   },
   data() {
     return {
-      detaildata : '',
-      password : '',
       token: localStorage.getItem('token') || null,
       detail : {},
       listSupplier : [],
@@ -100,7 +98,7 @@ export default {
   methods : {
     fetchdata() {
       const offset = (this.currentPage - 1) * this.limit;
-             Axios.get(`http://159.223.57.121:8090/supplier/find-all?limit=${this.limit}&offset=${offset}`, 
+            Axios.get(`http://159.223.57.121:8090/supplier/find-all?limit=${this.limit}&offset=${offset}`, 
               {
                 headers: {
                   'accept': '*/*',

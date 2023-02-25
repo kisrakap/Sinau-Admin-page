@@ -1,29 +1,32 @@
 <template>
     <div>
-            <v-sheet width="300" class="mx-auto">
-              <v-form @submit.prevent>
-                <v-text-field
-                  v-model="namaSupplier"
-                  :rules="rules"
-                  label="Nama Supplier"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="alamatSupplier"
-                  :rules="rules"
-                  label="Alamat"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="noTelp"
-                  :rules="rules"
-                  label="Stok"
-                  required
-                ></v-text-field>
-                <v-btn type="button" @click="adddata" block class="mt-2">Submit</v-btn>
-                <v-btn type="button" @click="gotohome" block class="mt-2">Cancel</v-btn>
-              </v-form>
-            </v-sheet>
+        <v-sheet width="500" class="mx-auto">
+          <v-form @submit.prevent>
+            <v-text-field
+              v-model="namaSupplier"
+              :rules="rules"
+              label="Nama Supplier"
+              required
+              outlined
+            ></v-text-field>
+            <v-text-field
+              v-model="alamatSupplier"
+              :rules="rules"
+              label="Alamat"
+              required
+              outlined
+            ></v-text-field>
+            <v-text-field
+              v-model="noTelp"
+              :rules="rules"
+              label="No Telpon"
+              required
+              outlined
+            ></v-text-field>
+            <v-btn variant="tonal" type="v-btn" @click="updatedata" block class="mt-2">Submit</v-btn>
+            <v-btn type="v-btn" @click="gotohome" block class="mt-2">Cancel</v-btn>
+          </v-form>
+        </v-sheet>
     </div>
 </template>
 <script>
@@ -46,7 +49,7 @@ export default {
     },
     created() {
         this.supplierId = this.$route.params.id;  
-        this.getSuuplier()
+        this.getSupplier()
         
     },
     methods: {
@@ -66,8 +69,7 @@ export default {
             }})
             .then((resp) => {
               if (resp.status === 200 ){
-                console.log("berhasil")
-                router.push('/supplier')
+                this.gotohome()
               } else {
                   this.msg = resp.data.message
                   this.gagalmodal = true
@@ -75,7 +77,7 @@ export default {
             })
             .catch(err => console.error(err)) 
         },
-        getBarang() {
+        getSupplier() {
              Axios.get(`http://159.223.57.121:8090/supplier/find-by-id/${this.supplierId}`, 
               {
                 headers: {
@@ -86,14 +88,12 @@ export default {
             })
             .then((resp) => {
               if (resp.status === 200){
-                this.detail = resp.data.data
-                console.log(this.detail)
-                
+                this.detail = resp.data.data                
                 this.namaSupplier = this.detail.namaSupplier,
                 this.noTelp = this.detail.noTelp,
-                this.alamat = this.detail.alamat
+                this.alamatSupplier = this.detail.alamat
               } else {
-                console.log("test")
+                console.log("test gagal")
               }
             }
             )

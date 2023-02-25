@@ -29,7 +29,7 @@
                     required
                     return-object
                 ></v-select>
-                <v-btn type="button" @click="updatedata" block class="mt-2">Submit</v-btn>
+                <v-btn type="v-btn" @click="updatedata" block class="mt-2">Submit</v-btn>
               </v-form>
             </v-sheet>
     </div>
@@ -69,9 +69,6 @@ export default {
       }
     },
     methods: {
-        updatedata() {
-            router.push()
-        },
         getBarang() {
              Axios.get(`http://159.223.57.121:8090/barang/find-by-id/${this.barangId}`, 
               {
@@ -141,7 +138,10 @@ export default {
             )
             .catch(err => console.error(err)) 
 
-    },
+        },
+        gotohome() {
+          router.go(-1)
+        }
     },
 }
 </script>

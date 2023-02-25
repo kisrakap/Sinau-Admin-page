@@ -2,39 +2,51 @@
   <div class="about">
     <v-container>
       <h3>Register Page</h3>
-      <form>
-        <v-text-field
-          v-model="username"
-          label="Username"
-          :rules="[v => !!v || 'Name is required']"
-          required
-        ></v-text-field>
+      <v-row>
+        <v-col class="pa-3">
+          <v-card class="rounded-xl" outlined elevation="20">
+            <form class="rounded-lg pa-3 ma-3" elevation="20">
+              <v-text-field
+                v-model="username"
+                label="Username"
+                :rules="[v => !!v || 'Name is required']"
+                required
+              ></v-text-field>
+      
+              <v-text-field
+                v-model="profileName"
+                label="Profile Name"
+                :rules="[v => !!v || 'Name is required']"
+                required
+              ></v-text-field>
+          
+              <v-text-field
+                v-model="password"
+                label="password"
+                type="password"
+                required
+                :rules="[v => !!v || 'Name is required']"
+              ></v-text-field>
+          
+          
+              <v-btn
+                class="me-4"
+                @click.prevent="register"
+                color="primary"
+              >
+                submit
+              </v-btn>
+            
+              <router-link to="/login" class="row-pointer">
+                <span> Sudah mempunyai akun ? Login disini </span>
+              </router-link>
+            </form>
 
-        <v-text-field
-          v-model="profileName"
-          label="Profile Name"
-          :rules="[v => !!v || 'Name is required']"
-          required
-        ></v-text-field>
-    
-        <v-text-field
-          v-model="password"
-          label="E-mail"
-          required
-          :rules="[v => !!v || 'Name is required']"
-        ></v-text-field>
-    
-    
-        <v-btn
-          class="me-4"
-          @click="register"
-        >
-          submit
-        </v-btn>
-        <v-btn @click="clear">
-          clear
-        </v-btn>
-      </form>
+          </v-card>
+
+        </v-col>
+      </v-row>
+     
     </v-container>
   </div>
   <v-dialog
@@ -51,7 +63,6 @@
   </v-card>
 </v-dialog>
 </template>
-
 
 <script>
 // @ is an alias to /src
@@ -92,10 +103,8 @@ export default {
             .catch(err => console.error(err)) 
 
     },
-    clear() {
-      this.username = '',
-      this.profileName = '',
-      this.password = ''
+    gotologin(){
+      router.push('/login')
     }
   }
 

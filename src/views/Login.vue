@@ -1,34 +1,50 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <v-container>
-      <v-form ref="form">
-        <v-text-field
-          v-model="username"
-          label="Name"
-          :rules="[v => !!v || 'Name is required']"
-          required
-        ></v-text-field>
-    
-        <v-text-field
-          v-model="password"
-          label="password"
-          :rules="[v => !!v || 'Password is required']"
-          required
-        ></v-text-field>
-    
-    
-        <v-btn
-          class="me-4"
-          @click="login"
-        >
-          submit
-        </v-btn>
-        <v-btn @click="clear">
-          clear
-        </v-btn>
-      </v-form>
-    </v-container>
+  <div class="home pa-10 ma-3">
+    <v-row >
+      <v-col cols="6">
+        <img alt="Vue logo" src="../assets/logo.png">
+      </v-col>
+      <v-col cols="6">
+        <v-container class="ma-3 pa-3" >
+          <v-card outlined elevation="20" class="rounded-xl">
+            <v-form ref="form" class="ma-1 pa-2 rounded outlined" elevation="20">
+              <v-text-field
+                v-model="username"
+                label="Name" 
+                class="rounded-xl"
+                outlined
+                :rules="[v => !!v || 'Name is required']"
+                required
+              ></v-text-field>
+          
+              <v-text-field
+                v-model="password"
+                label="password"
+                type="password"
+                class="rounded-xl"
+                outlined
+                :rules="[v => !!v || 'Password is required']"
+                required
+              ></v-text-field>
+              
+              <v-hover v-slot="{ hover }">
+                <v-btn
+                  class="me-4"
+                  @click="login"
+                  color="primary"
+                >
+                  submit
+                </v-btn>
+              </v-hover>
+                <router-link to="/register" class="row-pointer">
+                  <span> Belum punya akun ? register disini </span>
+                </router-link>
+   
+            </v-form>
+          </v-card>
+        </v-container>
+      </v-col>
+    </v-row>
     <v-dialog
       v-model="gagalmodal"
       width="auto"
@@ -63,6 +79,9 @@ export default {
   },
   methods : {
     async login () {
+      if (localStorage.getItem('token')) {
+        router.push('/homepage')
+      }
       const { valid } = await this.$refs.form.validate()
       if (valid) {
         Axios.post('http://159.223.57.121:8090/auth/login', 
@@ -78,7 +97,7 @@ export default {
            console.log(resp)
            this.token = resp.data?.data?.token || "" 
            localStorage.setItem('token', this.token)
-           router.push('homepage')
+           router.push('/homepage')
          } else if (resp.message ){
            this.msg = resp.message
            this.gagalmodal = true
@@ -94,12 +113,17 @@ export default {
       }
 
     },
-    clear() {
-
+    gotoregister(){
+      router.push('/register')
     }
+
   }
 
   
 }
-
 </script>
+<style>
+.row-pointer {
+  cursor: pointer;
+}
+</style>

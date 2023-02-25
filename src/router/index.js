@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Loginpage from '../views/Login.vue'
+import Notfoundpage from '../views/Notfoundpage.vue'
 
 const routes = [
   {
@@ -25,7 +26,7 @@ const routes = [
   {
     path: '/addbarang',
     name: 'addbarang',
-    component: () => import( '../views/Createpage.vue')
+    component: () => import( '../views/CreateBarang.vue')
   },
   {
     path: '/editbarang/:id',
@@ -41,6 +42,11 @@ const routes = [
     path: '/editsupplier/:id',
     name: 'editsupplier',
     component: () => import( '../views/EditSupplier.vue')
+  },
+  {
+    path: '/:pathMatch(.*)',
+    name: 'Notfoundpage',
+    component: Notfoundpage
   }
 ]
 
