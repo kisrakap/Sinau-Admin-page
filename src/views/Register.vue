@@ -93,7 +93,6 @@ export default {
             }})
             .then((resp) => {
               if (resp.status === 200 && !resp.data.id){
-                console.log(resp.data)
                 router.push('/login')
               } else {
                   this.msg = resp.data.message

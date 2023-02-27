@@ -94,7 +94,6 @@ export default {
        }})
        .then((resp) => {
          if (resp.status === 200 && resp.data.data.id){
-           console.log(resp)
            this.token = resp.data?.data?.token || "" 
            localStorage.setItem('token', this.token)
            router.push('/homepage')

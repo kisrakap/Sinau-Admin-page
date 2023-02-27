@@ -16,34 +16,25 @@
             ></v-img>
         
             <v-card-title>
-              Username
+              David Smith
             </v-card-title>
         
             <v-card-subtitle>
               ONLINE
             </v-card-subtitle>
-        
-            <v-card-actions>
-              <v-btn
-                color="orange-lighten-2"
-              >
-                Explore
-              </v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-      
           </v-card>
           <v-card
-            class="mx-auto my-2"
             max-width="344"
             outlined
+            :thickness="4"
+            class="mx-auto my-2 border-opacity-75"
           >
             <v-card-title>
               Menu
             </v-card-title>
         
-            <v-card-subtitle>
-              <v-list-item class="btn" fab :disabled="isSupplier" @click.prevent="supplier" :color="isSupplier ? 'blue' : 'primary'">
+            <v-card-subtitle class="bg-dark">
+              <v-list-item class="btn bg-dark" fab :disabled="isSupplier" @click.prevent="supplier" :color="isSupplier ? 'blue' : 'primary'">
                 Supplier
               </v-list-item>
               <v-list-item class="btn" @click.prevent="barang" :disabled="isBarang" fab :color="isBarang? 'blue' : 'primary'">
@@ -75,10 +66,11 @@
               <v-table v-if="isBarang"
                 max-width="2000px"
                 height="700px"
-                class="w-100"
                 id="tbl"
                 :loading="isLoading"
+                class="w-100 border-opacity-25"
               >
+
                 <thead>
                   <tr>
                     <th class="text-left">
@@ -120,6 +112,7 @@
                     <td class="pa-2"> <v-btn @click.prevent="updateData(item)" class="border pa-2 rounded">Update</v-btn> <v-btn class="border pa-2 rounded">Hapus</v-btn></td>
                   </tr>
                 </tbody>
+               
                 <div>
                 </div>
               </v-table>
@@ -162,20 +155,36 @@
               </tbody>
               <div>
               </div>
-              </v-table>
-               <div class="d-flex justify-end">
-                itemms per page
-                <select id="limit" v-model="limit" @change.prevent="changeLimit">
+              </v-table> 
+                <v-divider
+                :thickness="3"
+                class="border-opacity-75"
+                color="info"
+              ></v-divider>
+               <div class="d-flex justify-end text-center align-center">
+                <h4 class="mx-2">items in Page </h4> 
+                <v-divider
+                :thickness="1"
+                class="border-opacity-75"
+                color="info"
+                vertical
+              ></v-divider>
+                <select class="mx-2 pa-2 border-opacity-50 rounded-lg" id="limit" v-model="limit" @change.prevent="changeLimit">
+                  <v-divider
+                :thickness="1"
+                class="border-opacity-75"
+                color="info"
+                vertical
+              ></v-divider>
                   <option v-for="option in limitOptions" :key="option" :value="option">{{ option }}</option>
                 </select>
-                 <v-btn :disabled="currentPage === 1" @click.prevent="previousPage">Previous</v-btn>
-                 <v-btn :disabled="currentPage === pageCount" @click.prevent="nextPage">Next</v-btn>
-                 page : {{ currentPage }}
+                 <v-btn  class="mx-2" :disabled="currentPage === 1" @click.prevent="previousPage">Previous</v-btn>
+                 <v-btn class="mx-2" :disabled="currentPage === pageCount" @click.prevent="nextPage">Next</v-btn>
+                 <h4>
+                   Page : {{ currentPage }}
+                 </h4>
                 </div>
                 <div>
-                    <!-- <v-btn v-for="pageNumber in pageCount" :key="pageNumber" @click="changePage(pageNumber)">
-                      {{ pageNumber }}
-                    </v-btn> -->
                 </div>
               
               <div>
@@ -242,25 +251,34 @@ export default {
     }
   },
   mounted() {
-    this.fetchdata(this.linkBarang)
+    this.fetchdata(this.menu)
   },
   watch : {
     isSupplier(){
-       if (this.isSupplier === true) {
-      this.fetchdata(this.linkSupplier)
-       this.menu = 'Supplier'}
+      if (this.isSupplier === true) {
+         this.menu = 'Supplier'
+        this.fetchdata(this.menu)
+      }
 
     }, 
 
     isBarang() {
       if (this.isBarang === true) 
-      {this.fetchdata(this.linkBarang)
-      this.menu = "Barang"}
+      {
+        this.menu = "Barang"
+        this.fetchdata(this.menu)
+      }
 
     }
   },
   methods : {
-    fetchdata(link) {
+    fetchdata(menu) {
+      let link = ''
+      if (menu === 'Barang'){
+        link = this.linkBarang
+      } else {
+        link = this.linkSupplier
+      }
       const offset = (this.currentPage - 1) * this.limit;
       this.isLoading = true
             Axios.get(`${link}?limit=${this.limit}&offset=${offset}`, 
@@ -270,21 +288,23 @@ export default {
                   'Authorization': 'Bearer ' + this.token // token adalah nilai dari authorization token yang diperoleh sebelumnya
               }})
             .then((resp) => {
-              
-              if (resp.status === 200 && this.isSupplier){
-                this.updateItemNumbers();
-                this.detail = resp.data
-                this.listSupplier = this.detail.data
-                this.totalItems = this.detail.total_record
-                this.totalPage = this.detail.total_page
-                this.isLoading = false
-              } else if (resp.status === 200 && this.isBarang){
-                this.updateItemNumbers();
-                this.detail = resp.data
-                this.listbarang = this.detail.data
-                this.totalItems = this.detail.total_record
-                this.totalPage = this.detail.total_page
-                this.isLoading = false 
+              if (resp.status === 200) {
+                if (this.menu === 'Supplier')
+                {
+                  this.updateItemNumbers();
+                  this.detail = resp.data
+                  this.listSupplier = this.detail.data
+                  this.totalItems = this.detail.total_record
+                  this.totalPage = this.detail.total_page
+                  this.isLoading = false
+                } else {
+                  this.updateItemNumbers();
+                  this.detail = resp.data
+                  this.listbarang = this.detail.data
+                  this.totalItems = this.detail.total_record
+                  this.totalPage = this.detail.total_page
+                  this.isLoading = false 
+                }
               } else {
                 this.gagalmodal = true
               }})
@@ -298,23 +318,23 @@ export default {
         });
         }, 500);
     },
-    async nextPage() {
+    nextPage() {
       this.currentPage++;
-      await this.fetchdata();
+      this.fetchdata(this.menu);
     },
-    async previousPage() {
+    previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        await this.fetchdata();
+        this.fetchdata(this.menu);
       }
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchdata();
+      this.fetchdata(this.menu);
     },
     changeLimit() {
       this.currentPage = 1;
-      this.fetchdata();
+       this.fetchdata(this.menu);
     },
     exportExcel() {
       const data = JSON.parse(JSON.stringify(this.listbarang)); 
@@ -331,17 +351,12 @@ export default {
           break;
         case "Supplier":
         router.push('/addsupplier')
-
           break;
         default:
           break;
       }
-   
-
     }, 
     updateData(item){
-      console.log(item.id)
-      // let itemdetail = item.id  
       if (this.isSupplier) {
         router.push({name : 'editsupplier', params : {id : item.id}})
         

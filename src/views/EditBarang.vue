@@ -1,37 +1,55 @@
 <template>
     <div>
-            <v-sheet width="300" class="mx-auto">
-              <v-form @submit.prevent>
+      <v-row>
+        <v-col>
+          <div class="rounded-lg border ma-5 pa-5" elevation="20">
+            <v-sheet width="500" elevation="20" class="mx-auto pa-5">
+              <v-form @submit.prevent class="ma-5 pa-5 text-left">
+                <div class="text-subtitle-1 text-medium-emphasis">Nama Barang</div>
                 <v-text-field
+                  class="rounded-lg"
                   v-model="namaBarang"
                   :rules="rules"
-                  label="Nama Barang"
                   required
+                  variant="outlined"
                 ></v-text-field>
+                <div class="text-subtitle-1 text-medium-emphasis">Harga Barang</div>
                 <v-text-field
                   v-model="hargaBarang"
                   :rules="rules"
-                  label="Harga Barang"
                   type="number"
                   required
+                  variant="outlined"
+                  min="0"
                 ></v-text-field>
+                <div class="text-subtitle-1 text-medium-emphasis">Stok Barang</div>
                 <v-text-field
                   v-model="stokBarang"
                   :rules="rules"
-                  label="Stok"
                   required
+                  variant="outlined"
+                  min="0"
                 ></v-text-field>
+                <div class="text-subtitle-1 text-medium-emphasis">Pilih Supplier</div>
                 <v-select
                     v-model="namaSupplier"
                     :items="items"
                     :rules="[v => !!v || 'Item is required']"
                     item-title="namaSupplier"
                     required
+                    name="namaSupplier"
+                    variant="outlined"
+                    placeholder="namaSupplier"
+                    single-line
                     return-object
                 ></v-select>
-                <v-btn type="v-btn" @click="updatedata" block class="mt-2">Submit</v-btn>
+                <v-btn type="v-btn" @click.prevent="updatedata" block class="mt-2" color="success">Submit</v-btn>
+                <v-btn type="v-btn" @click.prevent="gotohome" color="warning" block class="mt-2">Cancel</v-btn>
               </v-form>
             </v-sheet>
+          </div>
+        </v-col>
+      </v-row>
     </div>
 </template>
 <script>
@@ -47,12 +65,13 @@ export default {
             namaBarang : '',
             hargaBarang : 0,
             stokBarang : 0,
-            namaSupplier : {},
+            namaSupplier : {'namaSupplier' : ''},
             supplier : {},
             detail : {},
             items : [],
             rules : [v => !!v || 'Item is required'],
-            token: localStorage.getItem('token') || null
+            token: localStorage.getItem('token') || null,
+            isLoading : false
 
         }
     },
@@ -81,7 +100,6 @@ export default {
             .then((resp) => {
               if (resp.status === 200){
                 this.detail = resp.data.data
-                console.log(this.detail)
                 this.namaBarang = this.detail.namaBarang
                 this.hargaBarang = this.detail.harga
                 this.stokBarang = this.detail.stok
@@ -110,7 +128,6 @@ export default {
             }})
             .then((resp) => {
               if (resp.status === 200 ){
-                console.log("berhasil")
                 router.push('/homepage')
               } else {
                   this.msg = resp.data.message
@@ -120,6 +137,7 @@ export default {
             .catch(err => console.error(err)) 
         },
         getSuuplier() {
+          this.isLoading = true
              Axios.get(`http://159.223.57.121:8090/supplier/find-all?limit=50&offset=1`, 
               {
                 headers: {
@@ -131,8 +149,8 @@ export default {
             .then((resp) => {
               if (resp.status === 200){
                   this.items= resp.data.data
+                  this.isLoading = false
               } else {
-
               }
             }
             )
