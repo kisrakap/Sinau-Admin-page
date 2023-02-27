@@ -4,7 +4,7 @@ import Notfoundpage from '../views/Notfoundpage.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: Loginpage
   },

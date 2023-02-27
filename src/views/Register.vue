@@ -37,7 +37,7 @@
                 submit
               </v-btn>
             
-              <router-link to="/login" class="row-pointer">
+              <router-link to="/" class="row-pointer">
                 <span> Sudah mempunyai akun ? Login disini </span>
               </router-link>
             </form>
@@ -93,7 +93,7 @@ export default {
             }})
             .then((resp) => {
               if (resp.status === 200 && !resp.data.id){
-                router.push('/login')
+                router.push('/')
               } else {
                   this.msg = resp.data.message
                   this.gagalmodal = true

@@ -374,7 +374,7 @@ export default {
     },
     logout(){
       localStorage.removeItem('token');
-      router.push('/login')
+      router.push('/')
     }
   
   }}
